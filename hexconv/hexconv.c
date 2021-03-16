@@ -34,7 +34,7 @@
 //similar to "xxd -i <infile> <outfile>"
 int main(int argc, char* argv[]) {
 	FILE *fp,*fpout;
-	char ch;
+	int ch;
 
 	char* filename = argv[1];
 	char* fileout = argv[2];
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	//printf("Reading from : %s\n", filename);
 	//printf("Converted to : %s\n", filename_conv);
 
-	fp = fopen(filename, "r");
+	fp = fopen(filename, "rb");
 	fpout = fopen(fileout, "w");
 
 	fprintf(fpout, "unsigned char %s[] = {\n", filename_conv);
@@ -69,13 +69,21 @@ int main(int argc, char* argv[]) {
 	}
 	else
 	{
-		while ((ch = fgetc(fp)) != EOF)
-		{
+		while ((ch = fgetc(fp)) != EOF){
+			//ch = fgetc(fp);
+			//if(ch == EOF) {
+			//	printf("EOF!! cnt: %i,  char: %i\n",countchar,ch);
+			//	break;
+			//}
+			//printf("cnt: %i,  char: %i\n",countchar,ch);
 			if(countchar) {
 				fprintf(fpout, ","); //not for first char
+				if(!(countchar%10)) {
+					fprintf(fpout, "\n"); //not for first char
+				}
 			}
 			countchar++;
-			fprintf(fpout, "0x%02x", ch);
+			fprintf(fpout, "0x%02x", (unsigned char)ch);
 		}
 	}
 
